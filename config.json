@@ -1,0 +1,10 @@
+{
+    "jpeg": {
+        "max_quality": 70
+    },
+    "png": {
+        "min_quality": 50,
+        "max_quality": 90
+    }
+}
+

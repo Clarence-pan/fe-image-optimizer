@@ -1,0 +1,6 @@
+.vscode/
+lib/*.optimized.*
+/*.exe
+*.log
+*~
+debug
