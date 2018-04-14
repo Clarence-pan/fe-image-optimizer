@@ -24,14 +24,18 @@ func doOptimize(file string) {
 			return
 		}
 
-		for _, x := range files {
-			doOptimizeFile(x)
-		}
+		doOptimizeFiles(files)
 
 		return
 	}
 
 	doOptimizeFile(file)
+}
+
+func doOptimizeFiles(files []string) {
+	for _, x := range files {
+		doOptimizeFile(x)
+	}
 }
 
 func doOptimizeFile(file string) {

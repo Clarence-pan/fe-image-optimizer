@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -73,4 +74,8 @@ func listDirFiles(dir string) []string {
 	}
 
 	return files
+}
+
+func formatError(r any) string {
+	return fmt.Sprintf("%#v", r)
 }

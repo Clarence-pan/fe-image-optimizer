@@ -1,0 +1,15 @@
+{
+    "version": 1,
+    "jpeg": {
+        "max_quality": 70
+    },
+    "png": {
+        "min_quality": 50,
+        "max_quality": 90
+    },
+    "jpegoptim": "lib/jpegoptim",
+    "pngquant": "lib/pngquant",
+    "optimized_suffix": ".o",
+    "black_list": ["__MACOSX", "thumbs.db"]
+}
+
