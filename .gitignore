@@ -6,4 +6,5 @@ test/test-zip/
 *.log
 *~
 debug
+debug.test
 vendor/

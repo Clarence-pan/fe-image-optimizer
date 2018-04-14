@@ -1,6 +1,10 @@
 package main
 
+//#include "console_windows.h"
+import "C"
+
 import (
+	"log"
 	"strings"
 
 	"github.com/lxn/walk"
@@ -8,6 +12,8 @@ import (
 )
 
 func showMainWindow() {
+	ret := C.freeConsole()
+	log.Printf("freeConsole() => %d", ret)
 
 	var inTE, outTE *walk.TextEdit
 
