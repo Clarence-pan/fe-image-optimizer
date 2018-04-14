@@ -17,6 +17,14 @@ type tBaseOptimizer struct {
 	outputWriter io.WriteCloser
 }
 
+func (opt *tBaseOptimizer) inputFile() string {
+	return opt.file
+}
+
+func (opt *tBaseOptimizer) setInputFileContent(fileContent []byte) {
+	opt.setInputFileReader(bytes.NewReader(fileContent))
+}
+
 func (opt *tBaseOptimizer) setInputFileReader(reader io.Reader) {
 	opt.inputReader = reader
 }
@@ -25,7 +33,6 @@ func (opt *tBaseOptimizer) getInputFileReader() (reader io.Reader) {
 	if opt.inputReader != nil {
 		return opt.inputReader
 	}
-
 	reader, err := os.Open(opt.file)
 	panicIf(err)
 
@@ -35,10 +42,10 @@ func (opt *tBaseOptimizer) getInputFileReader() (reader io.Reader) {
 func (opt *tBaseOptimizer) getOutputFileName(fileExtName string) string {
 	i := strings.LastIndex(opt.file, ".")
 	if i < 0 {
-		return opt.file + ".optimized" + fileExtName
+		return opt.file + cfg.OptimizedSuffix + fileExtName
 	}
 
-	return opt.file[0:i] + ".optimized" + fileExtName
+	return opt.file[0:i] + cfg.OptimizedSuffix + fileExtName
 }
 
 func (opt *tBaseOptimizer) setOutputFileWriter(writer io.WriteCloser) {

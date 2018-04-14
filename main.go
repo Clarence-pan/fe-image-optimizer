@@ -3,12 +3,9 @@ package main
 import (
 	"flag"
 	"log"
-	"regexp"
 )
 
 var cfg *tOptimizerConfig
-
-var optimizedFileRe = regexp.MustCompile(`\.optimized\.\w+`)
 
 func main() {
 	var err error
@@ -31,4 +28,5 @@ func main() {
 		doOptimize(x)
 	}
 
+	log.Printf("all done.")
 }

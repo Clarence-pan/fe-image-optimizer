@@ -1,5 +1,7 @@
 .vscode/
-lib/*.optimized.*
+test/*.optimized.*
+test/*.o.*
+test/test-zip/
 /*.exe
 *.log
 *~

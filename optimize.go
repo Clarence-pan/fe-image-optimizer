@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"path/filepath"
 	"strings"
@@ -10,10 +11,13 @@ import (
 
 type tOptimizer interface {
 	optimize() error
+	inputFile() string
+	setInputFileContent(fileContent []byte)
+	setInputFileReader(fileReader io.Reader)
 }
 
 func doOptimize(file string) {
-	if optimizedFileRe.MatchString(file) {
+	if cfg.isOptimizedFile(file) {
 		log.Printf("ignore optimized %s", file)
 		return
 	}

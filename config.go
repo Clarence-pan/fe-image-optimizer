@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -15,6 +16,9 @@ type tOptimizerConfig struct {
 
 	Jpegoptim string `json:"jpegoptim"`
 	Pngquant  string `json:"pngquant"`
+
+	OptimizedSuffix string   `json:"optimized_suffix"`
+	BlackList       []string `json:"black_list"`
 }
 
 type tJpegConfig struct {
@@ -89,12 +93,55 @@ func (cfg *tOptimizerConfig) sanitizeAndValidate() error {
 		cfg.Pngquant = filepath.Join(execFileDir, cfg.Pngquant)
 	}
 
+	if cfg.OptimizedSuffix == "" {
+		cfg.OptimizedSuffix = ".o"
+	}
+
+	if cfg.BlackList == nil || len(cfg.BlackList) == 0 {
+		cfg.BlackList = []string{
+			"__MACOSX",
+			"thumbs.db",
+		}
+	}
+
 	return nil
 }
 
-func minInt(a, b int) int {
-	if a > b {
-		return b
+func (cfg *tOptimizerConfig) isOptimizedFile(file string) bool {
+	n := len(file)
+	z := n - len(cfg.OptimizedSuffix)
+	if z < 0 {
+		return false
 	}
-	return a
+
+	if file[z:] == cfg.OptimizedSuffix {
+		return true
+	}
+
+	i := strings.LastIndex(file, ".")
+	if i < 0 {
+		return false
+	}
+
+	j := i - len(cfg.OptimizedSuffix)
+	return j > 0 && file[j:i] == cfg.OptimizedSuffix
+}
+
+func (cfg *tOptimizerConfig) isInBlackList(file string) bool {
+	for _, x := range cfg.BlackList {
+		if x == file {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (cfg *tOptimizerConfig) saveTo(file string) error {
+	jsonBuf, err := json.Marshal(cfg)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(file, jsonBuf, 0666)
 }

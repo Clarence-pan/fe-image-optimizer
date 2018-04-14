@@ -5,6 +5,7 @@
     "png": {
         "min_quality": 50,
         "max_quality": 90
-    }
+    },
+    "optimized_suffix": ".o"
 }
 
