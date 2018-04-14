@@ -56,3 +56,21 @@ func basenameWithoutExt(file string) string {
 
 	return f[0:i]
 }
+
+func isDir(file string) bool {
+	f, err := os.Stat(file)
+	if err != nil {
+		return false
+	}
+
+	return f.IsDir()
+}
+
+func listDirFiles(dir string) []string {
+	files, err := filepath.Glob(dir + "/*")
+	if err != nil {
+		return []string{}
+	}
+
+	return files
+}
