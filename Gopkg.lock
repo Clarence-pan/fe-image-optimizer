@@ -1,0 +1,25 @@
+memo = "22e5e4feefd0a210a62b82e79cc8e471d3207af8ce1b5c59580e70f8b9b3cf07"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/lxn/walk"
+  packages = [".","declarative"]
+  revision = "7e29234b108d9f0da21251b53a5382dd7460d9aa"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/lxn/win"
+  packages = ["."]
+  revision = "d3b5b63dbde2ccbcad21970eb7080e90c2d631b3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "816c9085562cd7ee03e7f8188a1cfd942858cded"
+
+[[projects]]
+  name = "gopkg.in/Knetic/govaluate.v3"
+  packages = ["."]
+  revision = "d216395917cc49052c7c7094cf57f09657ca08a8"
+  version = "v3.0.0"

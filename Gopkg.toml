@@ -1,0 +1,19 @@
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/pkg/errors"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/lxn/walk"
+  packages = [".","declarative"]
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/lxn/win"
+  packages = ["."]
+
+[[dependencies]]
+  branch = "master"
+  name = "gopkg.in/Knetic/govaluate.v3"
+  packages = ["."]

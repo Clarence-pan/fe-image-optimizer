@@ -21,6 +21,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if len(flag.Args()) == 0 {
+		showMainWindow()
+		return
+	}
+
 	// log.Printf("config: %#v", cfg)
 	// log.Printf("args: %#v", flag.Args())
 
