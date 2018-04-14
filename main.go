@@ -21,8 +21,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Printf("config: %#v", cfg)
-	log.Printf("args: %#v", flag.Args())
+	// log.Printf("config: %#v", cfg)
+	// log.Printf("args: %#v", flag.Args())
 
 	for _, x := range flag.Args() {
 		doOptimize(x)

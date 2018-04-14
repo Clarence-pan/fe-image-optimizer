@@ -47,7 +47,7 @@ func (opt *tZipOptimizer) optimize() error {
 
 	log.Printf("there are %d files in %s", len(zipReader.File), opt.file)
 	for i, file := range zipReader.File {
-		log.Printf("processing %d/%d: %v", i, len(zipReader.File), file)
+		log.Printf("processing %d/%d: %s in %s", i + 1, len(zipReader.File), file.Name, opt.file)
 		opt.dealFileInArchive(file)
 	}
 

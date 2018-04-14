@@ -11,8 +11,9 @@ import (
 )
 
 type tOptimizerConfig struct {
-	Jpeg tJpegConfig `json:"jpeg"`
-	Png  tPngConfig  `json:"png"`
+	Version int         `json:"version"`
+	Jpeg    tJpegConfig `json:"jpeg"`
+	Png     tPngConfig  `json:"png"`
 
 	Jpegoptim string `json:"jpegoptim"`
 	Pngquant  string `json:"pngquant"`
