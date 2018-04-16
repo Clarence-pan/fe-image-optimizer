@@ -72,9 +72,7 @@ func doOptimizeFile(file string, ctx context.Context) {
 	}
 
 	err = optimizer.optimize(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+	panicIf(err)
 
 	log.Printf("Processed %s.", file)
 	return

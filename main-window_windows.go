@@ -27,6 +27,7 @@ func showMainWindow(args []string) {
 	ensureLibExeExists(102, cfg.Jpegoptim)
 	ensureLibExeExists(103, cfg.Pngquant)
 
+	isCanceled := false
 	isProcessing := false
 
 	mainWinDef := decl.MainWindow{
@@ -74,21 +75,30 @@ func showMainWindow(args []string) {
 
 							go func() {
 								defer func() {
+									r := recover()
+
 									startOptimizeBtn.SetText("开始优化")
 									startOptimizeBtn.SetEnabled(true)
 									cancelOptimizeBtn.SetVisible(false)
 									isProcessing = false
-									r := recover()
+
 									if r != nil {
-										log.Print("优化时遇到错误：" + formatError(r))
+										if isCanceled {
+											log.Print("已经取消。")
+										} else {
+											log.Print("优化时遇到错误：" + formatError(r))
+										}
 									}
+
 								}()
 
 								var ctx context.Context
 								ctx, doCancel = context.WithCancel(context.Background())
 
 								isProcessing = true
+								isCanceled = false
 								cancelOptimizeBtn.SetVisible(true)
+								cancelOptimizeBtn.SetEnabled(true)
 								startOptimizeBtn.SetEnabled(false)
 								startOptimizeBtn.SetText("正在优化...")
 								log.Print("开始优化...")
@@ -113,9 +123,10 @@ func showMainWindow(args []string) {
 						Visible:    false,
 						OnClicked: func() {
 							if doCancel != nil {
+								isCanceled = true
 								doCancel()
 								doCancel = nil
-								cancelOptimizeBtn.SetVisible(true)
+								cancelOptimizeBtn.SetEnabled(false)
 							}
 						},
 					},
@@ -173,7 +184,12 @@ func newLogWriterOfLogViewAndStdout(logView *LogView) io.Writer {
 }
 
 func (t *tLogWriterOfLogViewAndStdout) Write(p []byte) (n int, err error) {
-	n = len(p)
+	n, err = os.Stderr.Write(p)
+	if err != nil {
+		return
+	}
+
+	// n = len(p)
 	t.logView.AppendText(string(p[:n]))
 	return
 }

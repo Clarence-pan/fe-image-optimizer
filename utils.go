@@ -37,7 +37,7 @@ func minInt(a, b int) int {
 func mkdirIfNotExists(dirname string) {
 	err := os.MkdirAll(dirname, 0666)
 	if err != nil {
-		log.Fatal("[ERROR]: mkdir %s failed: %#v", dirname, err)
+		log.Panicf("[ERROR]: mkdir %s failed: %#v", dirname, err)
 	}
 }
 
@@ -116,6 +116,7 @@ func execCommandCommon(exe string, args []string, stdin io.Reader, stdout io.Wri
 	cmdRes := make(chan error)
 
 	go func() {
+		defer recover()
 		cmdRes <- cmd.Run()
 	}()
 
@@ -124,7 +125,7 @@ func execCommandCommon(exe string, args []string, stdin io.Reader, stdout io.Wri
 		if cmd.Process != nil {
 			cmd.Process.Kill()
 		}
-		panic(errors.New("context done.(user canceled.)"))
+		panic(fmt.Errorf("context done.(user canceled when executing %s)", exe))
 	case err := <-cmdRes:
 		if err != nil {
 			panic(err)
