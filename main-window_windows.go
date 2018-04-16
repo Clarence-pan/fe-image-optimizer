@@ -95,7 +95,7 @@ func showMainWindow(args []string) {
 
 								for i := 0; i < len(inFiles); i++ {
 									x := inFiles[i]
-									doOptimizeFile(x, ctx)
+									doOptimize(x, ctx)
 								}
 
 								log.Print("优化完成。")
