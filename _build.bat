@@ -9,9 +9,7 @@ REM    rsrc -arch=amd64 -manifest app.manifest -ico app.ico -o rsrc.syso
 cd /d %~dp0 ^
     && echo compiling resources... ^
     && windres -o rsrc.syso -F pe-x86-64 app.rc ^
-    && echo building cli program... ^
-    && go build -o fe-image-optimizer.exe ^
-    && echo building gui program... ^
-    && go build -ldflags="-H windowsgui" -o fe-image-optimizerw.exe ^
+    && echo building... ^
+    && go build -ldflags="-H windowsgui" -o fe-image-optimizer.exe ^
     && echo built.
 

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 	"unsafe"
 )
 
@@ -29,14 +31,16 @@ func getLastError() error {
 	return fmt.Errorf("#%s", C.GoString(lastErr))
 }
 
-func extractAppResource(resId int, filename string) {
+func extractAppResource(resId int, filename string, mode os.FileMode) {
 	addr, size := loadAppResourceById(resId)
-	log.Printf("load res#%d: address=%v, size=%v", resId, addr, size)
+	log.Printf("extract res#%d to %s (size=%v)", resId, filename, size)
 
 	buf := make([]byte, size)
 	for i := 0; i < size; i++ {
 		buf[i] = *((*byte)(unsafe.Pointer(uintptr(unsafe.Pointer(addr)) + uintptr(i))))
 	}
 
-	ensure(ioutil.WriteFile(filename, buf, 0666))
+	mkdirIfNotExists(filepath.Dir(filename))
+
+	ensure(ioutil.WriteFile(filename, buf, mode))
 }

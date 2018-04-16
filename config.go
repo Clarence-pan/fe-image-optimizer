@@ -31,6 +31,25 @@ type tPngConfig struct {
 	MaxQuality int `json:"max_quality"`
 }
 
+func loadConfigOrDefault(configFileName string) (cfg *tOptimizerConfig, err error) {
+	buf, err := ioutil.ReadFile(configFileName)
+	if err != nil {
+		cfg = &tOptimizerConfig{}
+	} else {
+		err = json.Unmarshal(buf, &cfg)
+		if err != nil {
+			return nil, errors.Wrap(err, "invalid configuration file")
+		}
+	}
+
+	err = cfg.sanitizeAndValidate()
+	if err != nil {
+		return nil, err
+	}
+
+	return
+}
+
 func loadConfig(configFileName string) (cfg *tOptimizerConfig, err error) {
 	buf, err := ioutil.ReadFile(configFileName)
 	if err != nil {

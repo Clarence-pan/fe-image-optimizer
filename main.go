@@ -16,7 +16,7 @@ func main() {
 
 	flag.Parse()
 
-	cfg, err = loadConfig(configFileName)
+	cfg, err = loadConfigOrDefault(configFileName)
 	if err != nil {
 		log.Fatal(err)
 	}

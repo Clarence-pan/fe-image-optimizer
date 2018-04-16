@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/lxn/walk"
@@ -23,8 +24,8 @@ func showMainWindow() {
 	var mainWin *walk.MainWindow
 	var startOptimizeBtn *walk.PushButton
 
-	extractAppResource(102, "test/102.dat")
-	extractAppResource(103, "test/103.dat")
+	ensureLibExeExists(102, cfg.Jpegoptim)
+	ensureLibExeExists(103, cfg.Pngquant)
 
 	isProcessing := false
 
@@ -186,4 +187,24 @@ func uniqueLines(lines []string) []string {
 
 func debugDump() {
 	walk.MsgBox(nil, "Debug", fmt.Sprintf("argv: %#v", os.Args), walk.MsgBoxOK)
+}
+
+func ensureLibExeExists(libResId int, libExePath string) {
+	if fileExists(libExePath) {
+		return
+	}
+
+	extList := strings.Split(os.Getenv("PATHEXT"), ";")
+	for _, ext := range extList {
+		if fileExists(libExePath + ext) {
+			return
+		}
+	}
+
+	outputLibExePath := libExePath
+	if filepath.Ext(libExePath) == "" {
+		outputLibExePath += ".exe"
+	}
+
+	extractAppResource(libResId, outputLibExePath, 0777)
 }

@@ -67,6 +67,15 @@ func isDir(file string) bool {
 	return f.IsDir()
 }
 
+func fileExists(file string) bool {
+	f, err := os.Stat(file)
+	if err != nil {
+		return false
+	}
+
+	return !f.IsDir()
+}
+
 func listDirFiles(dir string) []string {
 	files, err := filepath.Glob(dir + "/*")
 	if err != nil {
