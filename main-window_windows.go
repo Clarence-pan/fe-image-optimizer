@@ -184,12 +184,12 @@ func newLogWriterOfLogViewAndStdout(logView *LogView) io.Writer {
 }
 
 func (t *tLogWriterOfLogViewAndStdout) Write(p []byte) (n int, err error) {
-	n, err = os.Stderr.Write(p)
-	if err != nil {
-		return
-	}
+	// n, err = os.Stderr.Write(p)
+	// if err != nil {
+	// 	return
+	// }
 
-	// n = len(p)
+	n = len(p)
 	t.logView.AppendText(string(p[:n]))
 	return
 }
