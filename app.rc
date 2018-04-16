@@ -26,6 +26,6 @@ BEGIN
   END
 END
 
-102 RCDATA "lib\\jpegoptim.exe"
-103 RCDATA "lib\\pngquant.exe"
+102 300 "lib\\jpegoptim.exe"
+103 300 "lib\\pngquant.exe"
 

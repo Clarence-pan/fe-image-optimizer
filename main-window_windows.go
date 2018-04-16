@@ -23,6 +23,9 @@ func showMainWindow() {
 	var mainWin *walk.MainWindow
 	var startOptimizeBtn *walk.PushButton
 
+	extractAppResource(102, "test/102.dat")
+	extractAppResource(103, "test/103.dat")
+
 	isProcessing := false
 
 	mainWinDef := decl.MainWindow{
