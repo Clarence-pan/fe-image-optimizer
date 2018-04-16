@@ -34,8 +34,12 @@ func NewLogView(parent walk.Container) (*LogView, error) {
 		win.WS_EX_CLIENTEDGE); err != nil {
 		return nil, err
 	}
+
 	lv.setReadOnly(true)
 	lv.SendMessage(win.EM_SETLIMITTEXT, 4294967295, 0)
+
+	parent.SizeChanged().Attach(lv.onParentSizeChanged)
+
 	return lv, nil
 }
 
@@ -49,6 +53,10 @@ func (*LogView) MinSizeHint() walk.Size {
 
 func (*LogView) SizeHint() walk.Size {
 	return walk.Size{100, 100}
+}
+
+func (lv *LogView) onParentSizeChanged() {
+	lv.SetSize(lv.Parent().Size())
 }
 
 func (lv *LogView) setTextSelection(start, end int) {
