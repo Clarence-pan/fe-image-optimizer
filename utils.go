@@ -1,11 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 type any interface{}
@@ -87,4 +92,42 @@ func listDirFiles(dir string) []string {
 
 func formatError(r any) string {
 	return fmt.Sprintf("%#v", r)
+}
+
+func ensureContextNotDone(ctx context.Context) {
+	select {
+	case <-ctx.Done():
+		panic(errors.New("context done.(user canceled.)"))
+	default:
+		return
+	}
+}
+
+func execCommandCommon(exe string, args []string, stdin io.Reader, stdout io.WriteCloser, ctx context.Context, initCmd func(cmd *exec.Cmd)) {
+	log.Printf("[EXEC]: %s %v", exe, args)
+
+	cmd := exec.Command(exe, args...)
+	cmd.Stdin = stdin
+	cmd.Stdout = stdout
+	cmd.Stderr = stdout
+
+	initCmd(cmd)
+
+	cmdRes := make(chan error)
+
+	go func() {
+		cmdRes <- cmd.Run()
+	}()
+
+	select {
+	case <-ctx.Done():
+		if cmd.Process != nil {
+			cmd.Process.Kill()
+		}
+		panic(errors.New("context done.(user canceled.)"))
+	case err := <-cmdRes:
+		if err != nil {
+			panic(err)
+		}
+	}
 }

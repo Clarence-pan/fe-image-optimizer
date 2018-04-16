@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"io"
 	"log"
 	"path/filepath"
@@ -10,13 +11,13 @@ import (
 )
 
 type tOptimizer interface {
-	optimize() error
+	optimize(ctx context.Context) error
 	inputFile() string
 	setInputFileContent(fileContent []byte)
 	setInputFileReader(fileReader io.Reader)
 }
 
-func doOptimize(file string) {
+func doOptimize(file string, ctx context.Context) {
 	if strings.ContainsAny(file, "*?") {
 		files, e := filepath.Glob(file)
 		if e != nil {
@@ -24,35 +25,39 @@ func doOptimize(file string) {
 			return
 		}
 
-		doOptimizeFiles(files)
+		doOptimizeFiles(files, ctx)
 
 		return
 	}
 
-	doOptimizeFile(file)
+	doOptimizeFile(file, ctx)
 }
 
-func doOptimizeFiles(files []string) {
+func doOptimizeFiles(files []string, ctx context.Context) {
 	for _, x := range files {
-		doOptimizeFile(x)
+		doOptimizeFile(x, ctx)
 	}
 }
 
-func doOptimizeFile(file string) {
+func doOptimizeFile(file string, ctx context.Context) {
 	if cfg.isInBlackList(file) {
 		return
 	}
+
+	ensureContextNotDone(ctx)
 
 	if cfg.isOptimizedFile(file) {
 		log.Printf("ignore optimized %s", file)
 		return
 	}
 
+	ensureContextNotDone(ctx)
+
 	if isDir(file) {
 		log.Printf("Enter directory %s.", file)
 
 		for _, x := range listDirFiles(file) {
-			doOptimizeFile(x)
+			doOptimizeFile(x, ctx)
 		}
 
 		log.Printf("Leave directory %s.", file)
@@ -66,7 +71,7 @@ func doOptimizeFile(file string) {
 		return
 	}
 
-	err = optimizer.optimize()
+	err = optimizer.optimize(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

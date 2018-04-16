@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -20,6 +21,8 @@ func showMainWindow(args []string) {
 	var logViewParent *walk.Splitter
 	var mainWin *walk.MainWindow
 	var startOptimizeBtn *walk.PushButton
+	var cancelOptimizeBtn *walk.PushButton
+	var doCancel context.CancelFunc
 
 	ensureLibExeExists(102, cfg.Jpegoptim)
 	ensureLibExeExists(103, cfg.Pngquant)
@@ -73,6 +76,7 @@ func showMainWindow(args []string) {
 								defer func() {
 									startOptimizeBtn.SetText("开始优化")
 									startOptimizeBtn.SetEnabled(true)
+									cancelOptimizeBtn.SetVisible(false)
 									isProcessing = false
 									r := recover()
 									if r != nil {
@@ -80,18 +84,39 @@ func showMainWindow(args []string) {
 									}
 								}()
 
+								var ctx context.Context
+								ctx, doCancel = context.WithCancel(context.Background())
+
 								isProcessing = true
+								cancelOptimizeBtn.SetVisible(true)
 								startOptimizeBtn.SetEnabled(false)
 								startOptimizeBtn.SetText("正在优化...")
 								log.Print("开始优化...")
 
 								for i := 0; i < len(inFiles); i++ {
 									x := inFiles[i]
-									doOptimizeFile(x)
+									doOptimizeFile(x, ctx)
 								}
 
 								log.Print("优化完成。")
 							}()
+						},
+					},
+					decl.VSpacer{
+						ColumnSpan: 4,
+					},
+					decl.PushButton{
+						ColumnSpan: 3,
+						AssignTo:   &cancelOptimizeBtn,
+						Text:       "取消",
+						MaxSize:    decl.Size{Width: 600, Height: 40},
+						Visible:    false,
+						OnClicked: func() {
+							if doCancel != nil {
+								doCancel()
+								doCancel = nil
+								cancelOptimizeBtn.SetVisible(true)
+							}
 						},
 					},
 					decl.VSpacer{},

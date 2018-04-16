@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -21,7 +22,7 @@ func newPngOptimizer(file string) *tPngOptimizer {
 	}
 }
 
-func (opt *tPngOptimizer) optimize() (err error) {
+func (opt *tPngOptimizer) optimize(ctx context.Context) (err error) {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -35,22 +36,28 @@ func (opt *tPngOptimizer) optimize() (err error) {
 
 	inputReader := opt.getInputFileReader()
 
+	ensureContextNotDone(ctx)
+
 	inputFileContent, err := ioutil.ReadAll(inputReader)
 	panicIf(err)
 
+	ensureContextNotDone(ctx)
+
 	pngOutputFileWriter := opt.getOutputFileWriter(".png")
 	defer pngOutputFileWriter.Close()
-	optimizePngFile(bytes.NewReader(inputFileContent), pngOutputFileWriter)
+	optimizePngFile(bytes.NewReader(inputFileContent), pngOutputFileWriter, ctx)
+
+	ensureContextNotDone(ctx)
 
 	jpgBuf := pngToJpg(bytes.NewReader(inputFileContent))
 	jpgOutputFileWriter := opt.getOutputFileWriter(".jpg")
 	defer jpgOutputFileWriter.Close()
-	optimizeJpgFile(jpgBuf, jpgOutputFileWriter)
+	optimizeJpgFile(jpgBuf, jpgOutputFileWriter, ctx)
 
 	return nil
 }
 
-func optimizePngFile(inputReader io.Reader, outputWriter io.WriteCloser) {
+func optimizePngFile(inputReader io.Reader, outputWriter io.WriteCloser, ctx context.Context) {
 	exe := cfg.Pngquant
 	args := []string{
 		"--force",
@@ -61,5 +68,5 @@ func optimizePngFile(inputReader io.Reader, outputWriter io.WriteCloser) {
 		"-",
 	}
 
-	execCommand(exe, args, inputReader, outputWriter)
+	execCommand(exe, args, inputReader, outputWriter, ctx)
 }

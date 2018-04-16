@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"io/ioutil"
 	"strconv"
@@ -21,7 +22,7 @@ func newJpgOptimizer(file string) *tJpgOptimizer {
 	}
 }
 
-func (opt *tJpgOptimizer) optimize() (err error) {
+func (opt *tJpgOptimizer) optimize(ctx context.Context) (err error) {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -35,22 +36,26 @@ func (opt *tJpgOptimizer) optimize() (err error) {
 
 	inputReader := opt.getInputFileReader()
 
+	ensureContextNotDone(ctx)
 	inputFileContent, err := ioutil.ReadAll(inputReader)
 	panicIf(err)
 
+	ensureContextNotDone(ctx)
 	jpgOutputFileWriter := opt.getOutputFileWriter(".jpg")
 	defer jpgOutputFileWriter.Close()
-	optimizeJpgFile(bytes.NewReader(inputFileContent), jpgOutputFileWriter)
+	optimizeJpgFile(bytes.NewReader(inputFileContent), jpgOutputFileWriter, ctx)
 
+	ensureContextNotDone(ctx)
 	pngBuf := jpgToPng(bytes.NewReader(inputFileContent))
 	pngOutputFileWriter := opt.getOutputFileWriter(".png")
 	defer pngOutputFileWriter.Close()
-	optimizePngFile(pngBuf, pngOutputFileWriter)
+
+	optimizePngFile(pngBuf, pngOutputFileWriter, ctx)
 
 	return nil
 }
 
-func optimizeJpgFile(inputReader io.Reader, outputWriter io.WriteCloser) {
+func optimizeJpgFile(inputReader io.Reader, outputWriter io.WriteCloser, ctx context.Context) {
 	exe := cfg.Jpegoptim
 	args := []string{
 		"--force",
@@ -60,5 +65,5 @@ func optimizeJpgFile(inputReader io.Reader, outputWriter io.WriteCloser) {
 		"--stdin",
 	}
 
-	execCommand(exe, args, inputReader, outputWriter)
+	execCommand(exe, args, inputReader, outputWriter, ctx)
 }

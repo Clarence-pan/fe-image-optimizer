@@ -2,6 +2,7 @@ package main
 
 import (
 	"archive/zip"
+	"context"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -22,7 +23,7 @@ func newZipOptimizer(file string) *tZipOptimizer {
 	}
 }
 
-func (opt *tZipOptimizer) optimize() (err error) {
+func (opt *tZipOptimizer) optimize(ctx context.Context) (err error) {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -34,27 +35,33 @@ func (opt *tZipOptimizer) optimize() (err error) {
 		}
 	}()
 
+	ensureContextNotDone(ctx)
 	inputReader := opt.getInputFileReader()
 
+	ensureContextNotDone(ctx)
 	inputFileContent, err := ioutil.ReadAll(inputReader)
 	panicIf(err)
 
+	ensureContextNotDone(ctx)
 	zipReader, err := zip.NewReader(newReaderAtFromBuf(inputFileContent), int64(len(inputFileContent)))
 	panicIf(err)
 
+	ensureContextNotDone(ctx)
 	opt.extractDir = filepath.Join(dirname(opt.file), basenameWithoutExt(opt.file))
 	mkdirIfNotExists(opt.extractDir)
 
+	ensureContextNotDone(ctx)
 	log.Printf("there are %d files in %s", len(zipReader.File), opt.file)
 	for i, file := range zipReader.File {
 		log.Printf("processing %d/%d: %s in %s", i+1, len(zipReader.File), file.Name, opt.file)
-		opt.dealFileInArchive(file)
+		ensureContextNotDone(ctx)
+		opt.dealFileInArchive(file, ctx)
 	}
 
 	return nil
 }
 
-func (opt *tZipOptimizer) dealFileInArchive(file *zip.File) {
+func (opt *tZipOptimizer) dealFileInArchive(file *zip.File, ctx context.Context) {
 	if cfg.isInBlackList(file.Name) {
 		log.Printf("ignore black listed %s in zip file %s", file.Name, opt.file)
 		return
@@ -71,10 +78,12 @@ func (opt *tZipOptimizer) dealFileInArchive(file *zip.File) {
 		return
 	}
 
+	ensureContextNotDone(ctx)
 	r, err := file.Open()
 	panicIf(err)
 	defer r.Close()
 
+	ensureContextNotDone(ctx)
 	log.Printf("extracting %s from %s", file.Name, opt.file)
 	fileContent, err := ioutil.ReadAll(r)
 	panicIf(err)
@@ -85,17 +94,20 @@ func (opt *tZipOptimizer) dealFileInArchive(file *zip.File) {
 		mkdirIfNotExists(extractedFileDirName)
 	}
 
+	ensureContextNotDone(ctx)
 	ensure(ioutil.WriteFile(extractedFilePathName, fileContent, 0666))
 
+	ensureContextNotDone(ctx)
 	fileOptimizer, err := newOptimizer(extractedFilePathName)
 	if err != nil {
 		log.Printf("ignore %s: %v", extractedFilePathName, err)
 		return
 	}
 
+	ensureContextNotDone(ctx)
 	log.Printf("Processing %s...", extractedFilePathName)
 	fileOptimizer.setInputFileContent(fileContent)
-	ensure(fileOptimizer.optimize())
+	ensure(fileOptimizer.optimize(ctx))
 
 	log.Printf("Processed %s.", extractedFilePathName)
 }
