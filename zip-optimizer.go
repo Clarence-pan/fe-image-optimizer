@@ -22,12 +22,12 @@ func newZipOptimizer(file string) *tZipOptimizer {
 	}
 }
 
-func (opt *tZipOptimizer) optimize() error {
+func (opt *tZipOptimizer) optimize() (err error) {
 	defer func() {
 		r := recover()
 		if r != nil {
-			if err, ok := r.(error); ok {
-				err = errors.Wrapf(err, "failed to optimize %s", opt.file)
+			if e, ok := r.(error); ok {
+				err = errors.Wrapf(e, "failed to optimize %s", opt.file)
 			} else {
 				err = errors.Errorf("failed to optimize %s, detail: %#v", opt.file, r)
 			}
@@ -47,7 +47,7 @@ func (opt *tZipOptimizer) optimize() error {
 
 	log.Printf("there are %d files in %s", len(zipReader.File), opt.file)
 	for i, file := range zipReader.File {
-		log.Printf("processing %d/%d: %s in %s", i + 1, len(zipReader.File), file.Name, opt.file)
+		log.Printf("processing %d/%d: %s in %s", i+1, len(zipReader.File), file.Name, opt.file)
 		opt.dealFileInArchive(file)
 	}
 
@@ -56,11 +56,18 @@ func (opt *tZipOptimizer) optimize() error {
 
 func (opt *tZipOptimizer) dealFileInArchive(file *zip.File) {
 	if cfg.isInBlackList(file.Name) {
+		log.Printf("ignore black listed %s in zip file %s", file.Name, opt.file)
 		return
 	}
 
 	if cfg.isOptimizedFile(file.Name) {
 		log.Printf("ignore optimized %s in zip file %s", file.Name, opt.file)
+		return
+	}
+
+	fileInfo := file.FileInfo()
+	if fileInfo.IsDir() {
+		mkdirIfNotExists(filepath.Join(opt.extractDir, file.Name))
 		return
 	}
 

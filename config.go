@@ -129,9 +129,13 @@ func (cfg *tOptimizerConfig) isOptimizedFile(file string) bool {
 }
 
 func (cfg *tOptimizerConfig) isInBlackList(file string) bool {
-	for _, x := range cfg.BlackList {
-		if x == file {
-			return true
+	a := strings.Split(strings.Replace(file, string(os.PathSeparator), "/", -1), "/")
+
+	for _, y := range a {
+		for _, x := range cfg.BlackList {
+			if x == y {
+				return true
+			}
 		}
 	}
 

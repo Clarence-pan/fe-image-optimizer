@@ -32,7 +32,7 @@ func minInt(a, b int) int {
 func mkdirIfNotExists(dirname string) {
 	err := os.MkdirAll(dirname, 0666)
 	if err != nil {
-		log.Printf("[WARN]: mkdir %s failed: %#v", dirname, err)
+		log.Fatal("[ERROR]: mkdir %s failed: %#v", dirname, err)
 	}
 }
 

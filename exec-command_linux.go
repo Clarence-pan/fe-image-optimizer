@@ -3,7 +3,6 @@ package main
 import (
 	"io"
 	"log"
-	"os"
 	"os/exec"
 )
 
@@ -13,7 +12,7 @@ func execCommand(exe string, args []string, stdin io.Reader, stdout io.WriteClos
 	cmd := exec.Command(exe, args...)
 	cmd.Stdin = stdin
 	cmd.Stdout = stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = stdout
 
 	err := cmd.Run()
 	panicIf(err)

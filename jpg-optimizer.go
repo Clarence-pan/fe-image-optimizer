@@ -25,9 +25,8 @@ func (opt *tJpgOptimizer) optimize() (err error) {
 	defer func() {
 		r := recover()
 		if r != nil {
-			var ok bool
-			if err, ok = r.(error); ok {
-				err = errors.Wrapf(err, "failed to optimize %s", opt.file)
+			if e, ok := r.(error); ok {
+				err = errors.Wrapf(e, "failed to optimize %s", opt.file)
 			} else {
 				err = errors.Errorf("failed to optimize %s, detail: %#v", opt.file, r)
 			}

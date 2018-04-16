@@ -10,6 +10,6 @@
     "jpegoptim": "lib/jpegoptim",
     "pngquant": "lib/pngquant",
     "optimized_suffix": ".o",
-    "black_list": ["__MACOSX", "thumbs.db"]
+    "black_list": ["__MACOSX", "thumbs.db", ".DS_Store"]
 }
 
