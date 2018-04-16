@@ -1,8 +1,5 @@
 package main
 
-//#include "console_windows.h"
-import "C"
-
 import (
 	"fmt"
 	"io"
@@ -15,7 +12,7 @@ import (
 	decl "github.com/lxn/walk/declarative"
 )
 
-func showMainWindow() {
+func showMainWindow(args []string) {
 	var err error
 	var inTE *walk.TextEdit
 	var inFiles []string = []string{}
@@ -123,13 +120,18 @@ func showMainWindow() {
 	}
 
 	// GUI application dont need a console
-	C.freeConsole()
+	// C.freeConsole()
 	log.SetOutput(newLogWriterOfLogViewAndStdout(logView))
 
 	// set the main window icon
 	// 2: defined in app.rc -- the app icon
 	if mainIco, err := walk.NewIconFromResourceId(2); err == nil {
 		mainWin.SetIcon(mainIco)
+	}
+
+	if len(args) > 0 {
+		inFiles = uniqueLines(args)
+		inTE.SetText(strings.Join(inFiles, "\r\n"))
 	}
 
 	mainWin.Run()

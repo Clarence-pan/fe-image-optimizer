@@ -21,16 +21,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// debugDump()
-
-	if len(flag.Args()) == 0 {
-		showMainWindow()
-		return
-	}
-
-	for _, x := range flag.Args() {
-		doOptimize(x)
-	}
-
-	log.Printf("all done.")
+	showMainWindow(flag.Args())
 }

@@ -2,7 +2,7 @@ package main
 
 import "errors"
 
-func showMainWindow() {
+func showMainWindow(args []string) {
 	panic(errors.New("no input file given"))
 }
 
