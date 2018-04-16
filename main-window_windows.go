@@ -123,7 +123,8 @@ func showMainWindow() {
 	log.SetOutput(newLogWriterOfLogViewAndStdout(logView))
 
 	// set the main window icon
-	if mainIco, err := walk.NewIconFromResourceId(8); err == nil {
+	// 2: defined in app.rc -- the app icon
+	if mainIco, err := walk.NewIconFromResourceId(2); err == nil {
 		mainWin.SetIcon(mainIco)
 	}
 

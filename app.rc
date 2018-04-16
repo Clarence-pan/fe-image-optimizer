@@ -1,5 +1,31 @@
-100 ICON "app.ico"
-100 24   "app.manifest"
-101 RCDATA "app.ico"
+1 24 "app.manifest"
+2 ICON "app.ico"   
+
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", ""
+      VALUE "FileDescription", "FE Image Optimizer"
+      VALUE "FileVersion", "1.0"
+      VALUE "InternalName", ""
+      VALUE "LegalCopyright", ""
+      VALUE "OriginalFilename", "fe-image-optimizer.exe"
+      VALUE "ProductName", "FE Image Optimizer"
+      VALUE "ProductVersion", "1.0"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END
+
 102 RCDATA "lib\\jpegoptim.exe"
 103 RCDATA "lib\\pngquant.exe"
+

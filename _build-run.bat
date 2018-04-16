@@ -7,6 +7,6 @@ REM    - fe-image-optimizerw.exe - the GUI executable
 cd /d %~dp0 ^
     && .\_build.bat ^
     && echo running... ^
-    && .\fe-image-optimizerw.exe ^
+    && .\fe-image-optimizer.exe ^
     && echo done.
 
