@@ -6,7 +6,7 @@ REM    - fe-image-optimizerw.exe - the GUI executable
 
 cd /d %~dp0 ^
     && echo compiling resources... ^
-    && rsrc -arch=amd64 -manifest app.manifest -o rsrc.syso ^
+    && rsrc -arch=amd64 -manifest app.manifest -ico app.ico -o rsrc.syso ^
     && echo building cli program... ^
     && go build -o fe-image-optimizer.exe ^
     && echo building gui program... ^

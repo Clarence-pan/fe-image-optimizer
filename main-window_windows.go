@@ -5,9 +5,9 @@ import "C"
 
 import (
 	"fmt"
-	"os"
 	"io"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/lxn/walk"
@@ -121,6 +121,11 @@ func showMainWindow() {
 	// GUI application dont need a console
 	C.freeConsole()
 	log.SetOutput(newLogWriterOfLogViewAndStdout(logView))
+
+	// set the main window icon
+	if mainIco, err := walk.NewIconFromResourceId(8); err == nil {
+		mainWin.SetIcon(mainIco)
+	}
 
 	mainWin.Run()
 }

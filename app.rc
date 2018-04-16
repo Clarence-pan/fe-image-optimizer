@@ -1,0 +1,5 @@
+100 ICON "app.ico"
+100 24   "app.manifest"
+101 RCDATA "app.ico"
+102 RCDATA "lib\\jpegoptim.exe"
+103 RCDATA "lib\\pngquant.exe"
