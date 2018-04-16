@@ -21,13 +21,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// debugDump()
+
 	if len(flag.Args()) == 0 {
 		showMainWindow()
 		return
 	}
-
-	// log.Printf("config: %#v", cfg)
-	// log.Printf("args: %#v", flag.Args())
 
 	for _, x := range flag.Args() {
 		doOptimize(x)

@@ -4,6 +4,8 @@ package main
 import "C"
 
 import (
+	"fmt"
+	"os"
 	"io"
 	"log"
 	"strings"
@@ -171,4 +173,8 @@ func uniqueLines(lines []string) []string {
 	}
 
 	return r[:n]
+}
+
+func debugDump() {
+	walk.MsgBox(nil, "Debug", fmt.Sprintf("argv: %#v", os.Args), walk.MsgBoxOK)
 }

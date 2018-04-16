@@ -5,11 +5,10 @@ package main
 
 import (
 	"errors"
+	"strings"
 	"syscall"
 	"unsafe"
-)
 
-import (
 	"github.com/lxn/walk"
 	"github.com/lxn/win"
 )
@@ -61,6 +60,8 @@ func (lv *LogView) textLength() int {
 }
 
 func (lv *LogView) AppendText(value string) {
+	value = strings.Replace(value, "\n", "\r\n", -1)
+	value = strings.Replace(value, "\r\n\n", "\r\n", -1)
 	textLength := lv.textLength()
 	lv.setTextSelection(textLength, textLength)
 	lv.SendMessage(win.EM_REPLACESEL, 0, uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(value))))
