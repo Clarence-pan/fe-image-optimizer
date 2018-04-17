@@ -67,6 +67,8 @@ func showMainWindow(args []string) {
 			cancelOptimizeBtn.SetEnabled(true)
 			startOptimizeBtn.SetEnabled(false)
 			startOptimizeBtn.SetText("正在优化...")
+
+			log.Print("===================================")
 			log.Print("开始优化...")
 
 			for i := 0; i < len(inFiles); i++ {
