@@ -76,7 +76,7 @@ func (cfg *tOptimizerConfig) sanitizeAndValidate() error {
 	}
 
 	if cfg.Jpeg.MaxQuality == 0 {
-		cfg.Jpeg.MaxQuality = 70
+		cfg.Jpeg.MaxQuality = 80
 	}
 
 	if cfg.Png.MaxQuality > 100 || cfg.Png.MaxQuality < 0 {
