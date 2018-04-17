@@ -8,10 +8,18 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
+	"unsafe"
+
+	"github.com/lxn/win"
 
 	"github.com/lxn/walk"
 	decl "github.com/lxn/walk/declarative"
 )
+
+type MainWindow struct {
+	mw *walk.MainWindow
+}
 
 func showMainWindow(args []string) {
 	var err error
@@ -19,7 +27,7 @@ func showMainWindow(args []string) {
 	var inFiles []string = []string{}
 	var logView *LogView
 	var logViewParent *walk.Splitter
-	var mainWin *walk.MainWindow
+	var mainWin *MainWindow
 	var startOptimizeBtn *walk.PushButton
 	var cancelOptimizeBtn *walk.PushButton
 	var doCancel context.CancelFunc
@@ -32,7 +40,7 @@ func showMainWindow(args []string) {
 
 	onClickStartOptimizeBtn := func() {
 		if isProcessing {
-			walk.MsgBox(mainWin, "提示", "正在进行优化，请稍等片刻。", walk.MsgBoxIconWarning)
+			walk.MsgBox(mainWin.mw, "提示", "正在进行优化，请稍等片刻。", walk.MsgBoxIconWarning)
 			return
 		}
 
@@ -91,7 +99,7 @@ func showMainWindow(args []string) {
 
 	mainWinDef := decl.MainWindow{
 		Title:    "图片优化工具",
-		AssignTo: &mainWin,
+		AssignTo: &mainWin.mw,
 		MinSize:  decl.Size{600, 400},
 		Layout:   decl.VBox{},
 		OnDropFiles: func(files []string) {
@@ -179,7 +187,7 @@ func showMainWindow(args []string) {
 	// set the main window icon
 	// 2: defined in app.rc -- the app icon
 	if mainIco, err := walk.NewIconFromResourceId(2); err == nil {
-		mainWin.SetIcon(mainIco)
+		mainWin.mw.SetIcon(mainIco)
 	}
 
 	if len(args) > 0 {
@@ -187,7 +195,29 @@ func showMainWindow(args []string) {
 		inTE.SetText(strings.Join(inFiles, "\r\n"))
 	}
 
-	mainWin.Run()
+	mainWin.registerAboutDlg()
+
+	mainWin.mw.Run()
+}
+
+func (m *MainWindow) registerAboutDlg() {
+	hWnd := m.mw.Handle()
+	hSysMenu := GetSystemMenu(hWnd, win.FALSE)
+
+	text := "关于"
+
+	mii := win.MENUITEMINFO{
+		CbSize:     uint32(unsafe.Sizeof(win.MENUITEMINFO{})),
+		FMask:      win.MIIM_FTYPE | win.MIIM_ID | win.MIIM_STATE | win.MIIM_STRING,
+		FType:      win.MFT_STRING,
+		FState:     win.MFS_ENABLED,
+		DwTypeData: syscall.StringToUTF16Ptr(text),
+		Cch:        uint32(len([]rune(text))),
+		WID:        1000,
+	}
+
+	win.InsertMenuItem(hSysMenu, 0, false, &mii)
+
 }
 
 type tLogWriterOfLogViewAndStdout struct {
